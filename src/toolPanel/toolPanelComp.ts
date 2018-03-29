@@ -1,4 +1,4 @@
-import {ToolPanelVisibleChanged, Events, EventService, Autowired, Bean, Component, Context, GridCore, GridOptionsWrapper, PostConstruct} from "ag-grid/main";
+import {ToolPanelVisibleChanged, Events, EventService, Autowired, Bean, Component, Context, GridCore, GridApi, GridOptionsWrapper, PostConstruct} from "ag-grid/main";
 import {IToolPanel} from "ag-grid";
 import {ColumnPanel} from "./columnPanel";
 
@@ -65,6 +65,8 @@ class PanelSelectComp extends Component {
 
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired("gridCore") private gridCore: GridCore;
+    @Autowired("gridApi") private gridApi: GridApi;
+    @Autowired("eventService") private eventService: GridApi;
 
     constructor(columnPanel: ColumnPanel) {
         super();
@@ -85,6 +87,13 @@ class PanelSelectComp extends Component {
         let btShow = this.getRefElement("toggle-button");
         this.addDestroyableEventListener(btShow, 'click', () => {
             this.columnPanel.setVisible(!this.columnPanel.isVisible());
+            //this.gridApi.showToolPanel(!this.gridApi.isToolPanelShowing());
+            let event: ToolPanelVisibleChanged = {
+                type: Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi()
+            };
+            this.eventService.dispatchEvent(event);
             // this gets grid to resize immediately, rather than waiting
             // for next 500ms
             this.gridCore.doLayout();

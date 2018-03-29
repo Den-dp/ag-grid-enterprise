@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/ag-grid/dist/ag-grid.min.js"></script>
+    <script src="dist/ag-grid-enterprise.js"></script>
+</head>
+<body>
+
+    <div id="status"></div>
+<div id="myGrid" style="height: 131px; width:600px;" class="ag-theme-balham"></div>
+
+    <script>
+    
+    var columnDefs = [
+    {headerName: "Make", field: "make"},
+    {headerName: "Model", field: "model"},
+    {headerName: "Price", field: "price"}
+];
+
+// specify the data
+var rowData = [
+    {make: "Toyota", model: "Celica", price: 35000},
+    {make: "Ford", model: "Mondeo", price: 32000},
+    {make: "Porsche", model: "Boxter", price: 72000}
+];
+
+// let the grid know which columns and what data to use
+var gridOptions = {
+    columnDefs: columnDefs,
+    rowData: rowData,
+    onToolPanelVisibleChanged(){
+        console.log(arguments[0]);
+        document.querySelector('#status').innerHTML = arguments[0].api.isToolPanelShowing();
+    },
+    onGridReady: function (params) {
+        params.api.sizeColumnsToFit();
+    }
+};
+
+// wait for the document to be loaded, otherwise
+// ag-Grid will not find the div in the document.
+document.addEventListener("DOMContentLoaded", function() {
+
+    // lookup the container we want the Grid to use
+    var eGridDiv = document.querySelector('#myGrid');
+
+    // create the grid passing in the div to use together with the columns & data we want to use
+    new agGrid.Grid(eGridDiv, gridOptions);
+});
+    </script>
+</body>
+</html>
